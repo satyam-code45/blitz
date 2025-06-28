@@ -1,12 +1,13 @@
-import { Button } from "@/components/ui/button";
+import { caller } from "@/trpc/server";
 
-export default function Home() {
+
+export default async function Home() {
+  
+  const data = await caller.hello({text:"unknown"})
+  
   return (
     <div className="text-red-600 font-bold">
-      Hello
-      <Button>
-        Check
-      </Button>
+      {JSON.stringify(data)}
     </div>
   );
 }
