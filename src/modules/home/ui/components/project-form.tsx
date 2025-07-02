@@ -13,6 +13,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { PROJECT_TEMPLATES } from "../../contants";
+import { useClerk } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
+import { useCurrentTheme } from "@/hooks/use-current-theme";
 
 const formSchema = z.object({
   value: z
@@ -22,8 +25,10 @@ const formSchema = z.object({
 });
 
 function ProjectForm() {
+  const currentTheme = useCurrentTheme();
   const router = useRouter();
   const trpc = useTRPC();
+  const clerk = useClerk();
   const queryClient = useQueryClient();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -40,7 +45,17 @@ function ProjectForm() {
         router.push(`/projects/${data.id}`);
       },
       onError: (error) => {
-        toast.error(error.message);
+        if (error.message === "Not Authenciated") {
+          clerk.openSignIn({
+            appearance: {
+              baseTheme: currentTheme === "dark" ? dark : undefined,
+              elements: {
+                cardBox: "border! shadow-none! rounded-lg! ",
+              },
+            },
+          });
+          toast.error("Please sign in to continue");
+        } else toast.error(error.message);
       },
     })
   );

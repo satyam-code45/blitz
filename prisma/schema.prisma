@@ -14,9 +14,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Llm {
+  OPENAI
+  GEMINI
+}
+
+model User {
+  id String @id
+
+  llm Llm?
+  key String?
+}
+
 model Project {
   id   String @id @default(uuid())
   name String
+
+  userId String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -14,6 +14,7 @@ import FragmentWeb from "../components/fragment-web";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CodeIcon, EyeIcon } from "lucide-react";
 import { FileExplorer } from "@/components/file-explorer";
+import { UserControl } from "@/components/user-control";
 
 interface Props {
   projectId: string;
@@ -62,14 +63,18 @@ function ProjectView({ projectId }: Props) {
                   <CodeIcon /> <span>Code</span>
                 </TabsTrigger>
               </TabsList>
+              <div className="ml-auto ">
+                <UserControl />
+              </div>
             </div>
+
             <TabsContent value="preview">
               {!!activeFragment && <FragmentWeb data={activeFragment} />}
             </TabsContent>
             <TabsContent value="code" className="min-h-0">
               {!!activeFragment?.files && (
                 <FileExplorer
-                  files={activeFragment.files as {[path: string]: string }}
+                  files={activeFragment.files as { [path: string]: string }}
                 />
               )}
             </TabsContent>
