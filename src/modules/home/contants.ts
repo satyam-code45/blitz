@@ -1,5 +1,11 @@
 export const PROJECT_TEMPLATES = [
   {
+    emoji: "🧠",
+    title: "Build an AI SaaS Landing Page",
+    prompt:
+      "Design a modern AI SaaS landing page with a clean, dark-mode-compatible layout. Include a hero section, features grid, pricing tiers, testimonials, and a footer. Support theme toggling via a prop. Focus on smooth section transitions, visually engaging gradients, and responsive layout for desktop and mobile. Use placeholder content and mock data to simulate a real product experience.",
+  },
+  {
     emoji: "💬",
     title: "Build a Chat App Interface",
     prompt:
@@ -48,4 +54,3 @@ export const PROJECT_TEMPLATES = [
       "Create a portfolio analytics dashboard with chart placeholders, metric cards, and a filterable activity table using local state. Use a responsive layout, balanced whitespace, and visual hierarchy for a polished finance UI.",
   }
 ] as const;
-     

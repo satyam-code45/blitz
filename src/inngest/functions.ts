@@ -5,6 +5,7 @@ import {
   createTool,
   createNetwork,
   type Tool,
+  gemini,
 } from "@inngest/agent-kit";
 import { Sandbox } from "@e2b/code-interpreter";
 import { getSandbox, lastAssistantTextMessageContent } from "./utils";
@@ -25,16 +26,39 @@ export const codeAgentFunction = inngest.createFunction(
       const sandbox = await Sandbox.create("blitz");
       return sandbox.sandboxId;
     });
+
+    
+
+    function getLLMModel(llm: string, apiKey: string, model: string) {
+      switch (llm) {
+        case "openai":
+          return openai({
+            model: model,
+            apiKey,
+            defaultParameters: { temperature: 0.1 },
+          });
+
+        case "gemini":
+          return gemini({
+            model: model,
+            apiKey,
+            defaultParameters: {
+              generationConfig: {
+                temperature: 0.5,
+              },
+            },
+          });
+
+        default:
+          throw new Error(`Unsupported LLM provider: ${llm}`);
+      }
+    }
+    console.log(PROMPT);
     const codeAgent = createAgent<AgentState>({
       name: "code-agent",
       description: "An Expert coding agent",
       system: PROMPT,
-      model: openai({
-        model: "gpt-4.1",
-        defaultParameters: {
-          temperature: 0.1,
-        },
-      }),
+      model: getLLMModel(event.data.llm, event.data.apiKey, event.data.model),
       tools: [
         createTool({
           name: "terminal",

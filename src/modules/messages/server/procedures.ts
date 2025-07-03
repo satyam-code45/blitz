@@ -40,6 +40,29 @@ export const messageRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      const existingUser = await prisma.user.findUnique({
+        where: {
+          id: ctx.auth.userId,
+        },
+        include: {
+          keys: true,
+        },
+      });
+      if (!existingUser) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Please Login",
+        });
+      }
+
+      const inUseKey = existingUser.keys.find((k) => k.inUse === true);
+
+      if (!inUseKey) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Please Provide a api key!",
+        });
+      }
       const existingProject = await prisma.project.findUnique({
         where: {
           id: input.projectId,
@@ -66,6 +89,9 @@ export const messageRouter = createTRPCRouter({
         data: {
           value: input.value,
           projectId: input.projectId,
+          apiKey: inUseKey.key,
+          model: inUseKey.model,
+          llm: inUseKey.llm
         },
       });
 
