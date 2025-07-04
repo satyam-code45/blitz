@@ -14,6 +14,7 @@ import { getSandbox, lastAssistantTextMessageContent } from "./utils";
 import { z } from "zod";
 import { PROMPT } from "@/prompts";
 import prisma from "@/lib/db";
+// import { SANDBOX_TIMEOUT } from "./constants";
 
 interface AgentState {
   summary: string;
@@ -26,6 +27,8 @@ export const codeAgentFunction = inngest.createFunction(
   async ({ event, step }) => {
     const sandboxId = await step.run("get-sandbox-id", async () => {
       const sandbox = await Sandbox.create("blitz");
+      //increase the sandbox life by 30 min by default it is 5min
+      // await sandbox.setTimeout(SANDBOX_TIMEOUT)
       return sandbox.sandboxId;
     });
 
@@ -38,6 +41,7 @@ export const codeAgentFunction = inngest.createFunction(
         orderBy: {
           createdAt: "desc",
         },
+        take: 5,
       });
 
       for (const message of messages) {
@@ -47,7 +51,7 @@ export const codeAgentFunction = inngest.createFunction(
           content: message.content,
         });
       }
-      return formattedMessages;
+      return formattedMessages.reverse();
     });
 
     const state = createState<AgentState>(
@@ -214,7 +218,7 @@ export const codeAgentFunction = inngest.createFunction(
       },
     });
 
-    const result = await network.run(event.data.value, {state});
+    const result = await network.run(event.data.value, { state });
 
     const isError =
       !result.state.data.summary ||
