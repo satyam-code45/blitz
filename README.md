@@ -1,4 +1,4 @@
-# ⚡ Blitz – AI-Powered App Builder
+# ⚡ Blitz – AI-Powered Website Builder
 
 ![image](https://github.com/user-attachments/assets/a4f2ccd7-a6ed-4b08-a4bc-d5573c86a8d5)
 
